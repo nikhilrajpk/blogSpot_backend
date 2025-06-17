@@ -27,7 +27,7 @@ class LoginView(APIView):
         return Response({'detail': 'Invalid credentials'}, status=401)
 
 class UserListView(generics.ListCreateAPIView):
-    queryset = CustomUser.objects.all()
+    queryset = CustomUser.objects.all().order_by('-id')
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAdminUser]
 

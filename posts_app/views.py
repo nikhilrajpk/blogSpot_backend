@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import Post, Comment
 from .serializers import PostSerializer, CommentSerializer
+from auth_app.serializers import UserSerializer
 from auth_app.models import CustomUser
 import logging
 
@@ -72,13 +73,18 @@ class CommentListCreateView(generics.ListCreateAPIView):
             logger.error(f"Comment creation failed: {str(e)}")
             raise
 
+# class AdminUserListView(generics.ListAPIView):
+#     queryset = CustomUser.objects.all().order_by('-created_at')
+#     serializer_class = UserSerializer
+#     permission_classes = [permissions.IsAdminUser]
+
 class AdminPostListView(generics.ListAPIView):
-    queryset = Post.objects.all()
+    queryset = Post.objects.all().order_by('-created_at')
     serializer_class = PostSerializer
     permission_classes = [permissions.IsAdminUser]
 
 class AdminCommentListView(generics.ListAPIView):
-    queryset = Comment.objects.all()
+    queryset = Comment.objects.all().order_by('-created_at')
     serializer_class = CommentSerializer
     permission_classes = [permissions.IsAdminUser]
 
