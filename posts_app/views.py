@@ -17,6 +17,16 @@ class PostListCreateView(generics.ListCreateAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    
+    def create(self, request, *args, **kwargs):
+        logger.info(f"Post creation request: user={request.user}, data={request.data}")
+        serializer = self.get_serializer(data=request.data)
+        if not serializer.is_valid():
+            logger.error(f"Serializer validation failed: {serializer.errors}")
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -24,7 +34,7 @@ class PostListCreateView(generics.ListCreateAPIView):
 class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsAuthorOrAdmin]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     
     def get(self, request, *args, **kwargs):
         logger.info(f"Post detail request: post_id={self.kwargs['pk']}, headers={dict(request.headers)}")
