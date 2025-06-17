@@ -25,6 +25,10 @@ class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsAuthorOrAdmin]
+    
+    def get(self, request, *args, **kwargs):
+        logger.info(f"Post detail request: post_id={self.kwargs['pk']}, headers={dict(request.headers)}")
+        return super().get(request, *args, **kwargs)
 
     def get_object(self):
         obj = super().get_object()

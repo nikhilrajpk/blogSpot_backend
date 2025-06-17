@@ -30,7 +30,6 @@ INSTALLED_APPS = [
     'corsheaders',
     'cloudinary_storage',
     'cloudinary',
-    'cms_app',
     'auth_app',
     'posts_app',
 ]

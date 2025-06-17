@@ -25,7 +25,7 @@ class PostSerializer(serializers.ModelSerializer):
     image = serializers.ImageField(required=False, allow_null=True)
     likes_count = serializers.SerializerMethodField()
     unlikes_count = serializers.SerializerMethodField()
-    comments = CommentSerializer(many=True, read_only=True)
+    comments = serializers.SerializerMethodField()
     likes = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     unlikes = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
@@ -39,6 +39,10 @@ class PostSerializer(serializers.ModelSerializer):
 
     def get_unlikes_count(self, obj):
         return obj.unlikes.count()
+    
+    def get_comments(self, obj):
+        approved_comments = obj.comments.filter(is_approved=True)
+        return CommentSerializer(approved_comments, many=True).data
     
     def validate_title(self, value):
         if len(value.strip()) < 5:
